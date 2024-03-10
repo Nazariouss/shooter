@@ -18,7 +18,7 @@ class Hero():
         self.cameraOn = True
 
     def cameraUp(self):
-        pos = self.hero.getPos()
+        pos = self.hero.getPos() #(1, 2, 4)
         base.mouseInterfaceNode.setPos(-pos[0], -pos[1], -pos[2] - 3)
         base.camera.reparentTo(render)
         base.enableMouse()
@@ -26,8 +26,11 @@ class Hero():
 
     def accept_events(self):
         base.accept('c', self.changeView)
+        base.accept('z', self.change_mode)
+
         base.accept('n', self.turn_left)
         base.accept('n' + '-repeat', self.turn_left)
+
         base.accept('m', self.turn_right)
         base.accept('m' + '-repeat', self.turn_right)
 
@@ -42,6 +45,12 @@ class Hero():
 
         base.accept('d', self.right)
         base.accept('d' + '-repeat', self.right)
+
+        base.accept('e', self.up)
+        base.accept('e' + '-repeat', self.up)
+
+        base.accept('q', self.down)
+        base.accept('q' + '-repeat', self.down)
 
     def changeView(self):
         if self.cameraOn:
@@ -93,6 +102,24 @@ class Hero():
     def move_to(self, angle):
         if self.mode:
             self.just_move(angle)
+        else:
+            self.try_move(angle)
+
+    def change_mode(self):
+        if self.mode:
+            self.mode = False
+        else:
+            self.mode = True
+
+    def try_move(self, angle):
+        pos = self.look_at(angle)
+        if self.land.isEmpty(pos):
+            pos = self.land.findHighestEmpty(pos)
+            self.hero.setPos(pos)
+        else:
+            pos = pos[0], pos[1], pos[2] + 1
+            if self.land.isEmpty(pos):
+                self.hero.setPos(pos)
         
     def forward(self):
         angle = (self.hero.getH()) % 360
@@ -109,3 +136,11 @@ class Hero():
     def right(self):
         angle = (self.hero.getH() + 270) % 360
         self.move_to(angle)
+
+    def up(self):
+        if self.mode:
+            self.hero.setZ(self.hero.getZ() + 1)
+
+    def down(self):
+        if self.mode and self.hero.getZ() - 1:
+            self.hero.setZ(self.hero.getZ() - 1)
