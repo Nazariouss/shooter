@@ -74,3 +74,21 @@ class Mapmanager():
         while not self.isEmpty((x, y, z)):
             z += 1
         return (x, y, z)
+    
+    def builBlock(self, pos):
+        x, y, z = pos
+        new = self.findHighestEmpty(pos)
+        if new[2] <= z + 1:
+            self.addBlock(new)
+
+    def delBlock(self, position):
+        blocks = self.findBlocks(position)
+        for block in blocks:
+            block.removeNode()
+
+    def delBlockFrom(self, position):
+        x, y, z = self.findHighestEmpty(position)
+        pos = x, y, z - 1
+        blocks = self.findBlocks(pos)
+        for block in blocks:
+            block.removeNode()
