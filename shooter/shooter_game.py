@@ -1,10 +1,14 @@
 #Створи власний Шутер!
 from pygame import *
+from random import randint
 
 mixer.init()
 # mixer.music.load("space.ogg")
 # mixer.music.play()
 fire_sound = mixer.Sound("fire.ogg")
+
+font.init()
+font0 = font.Font(None, 36)
 
 img_back = 'galaxy.jpg'
 img_hero = 'rocket.png'
@@ -38,8 +42,23 @@ class Player(GameSprite):
     def fire(self):
         pass
 
-ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
+class Enemy(GameSprite):
+    def update(self):
+        self.rect.y += self.speed
+        global lost
+        if self.rect.y > win_height:
+            self.rect.x = randint(80, win_width - 80)
+            self.rect.y = 0
+            lost = lost + 1
 
+monsters = sprite.Group()
+for i in range(5):
+    monster = Enemy("ufo.png", randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
+    monsters.add(monster)
+
+ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
+lost = 0
+score = 0
 clock = time.Clock()
 
 finish = False
@@ -53,6 +72,15 @@ while run:
         window.blit(background, (0,0))
         ship.update()
         ship.reset()
+
+        text = font0.render("Рахунок: " + str(score), 1, (255, 255, 255))
+        window.blit(text, (10, 20))
+
+        text_lose = font0.render("Пропущено: " + str(lost), 1, (255, 255, 255))
+        window.blit(text_lose, (10, 50))
+
+        monsters.draw(window)
+        monsters.update()
         display.update()
 
     clock.tick(60)
