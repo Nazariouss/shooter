@@ -26,7 +26,7 @@ class Hero():
 
     def accept_events(self):
         base.accept('c', self.changeView)
-        base.accept('z', self.change_mode)
+        base.accept('z', self.change_mode)  
 
         base.accept('n', self.turn_left)
         base.accept('n' + '-repeat', self.turn_left)
@@ -51,6 +51,9 @@ class Hero():
 
         base.accept('q', self.down)
         base.accept('q' + '-repeat', self.down)
+
+        base.accept('b', self.build)
+        base.accept('v', self.destroy)
 
     def changeView(self):
         if self.cameraOn:
@@ -144,3 +147,19 @@ class Hero():
     def down(self):
         if self.mode and self.hero.getZ() - 1:
             self.hero.setZ(self.hero.getZ() - 1)
+
+    def build(self):
+        angle = self.hero.getH() % 360
+        pos = self.look_at(angle)
+        if self.mode:
+            self.land.addBlock(pos)
+        else:
+            self.land.buildBlock(pos)
+
+    def destroy(self):
+        angle = self.hero.getH() % 360
+        pos = self.look_at(angle)
+        if self.mode:
+            self.land.delBlock(pos)
+        else:
+            self.land.delBlockFrom(pos)
