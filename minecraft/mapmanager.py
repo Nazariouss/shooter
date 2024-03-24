@@ -1,3 +1,5 @@
+import pickle
+
 class Mapmanager():
     """ Управління карткою """
     def __init__(self):
@@ -75,7 +77,7 @@ class Mapmanager():
             z += 1
         return (x, y, z)
     
-    def builBlock(self, pos):
+    def buildBlock(self, pos):
         x, y, z = pos
         new = self.findHighestEmpty(pos)
         if new[2] <= z + 1:
@@ -92,3 +94,22 @@ class Mapmanager():
         blocks = self.findBlocks(pos)
         for block in blocks:
             block.removeNode()
+
+    def saveMap(self):
+        blocks = self.land.getChildren()
+        with open("my_map.dat", "wb") as fout:
+            pickle.dump(len(blocks), fout)
+            for block in blocks:
+                x, y, z = block.getPos()
+                pos = (int(x), int(y), int(z))
+                pickle.dump(pos, fout)
+
+    def loadMap(self):
+        self.clear()
+        with open("my_map.dat", "rb") as fin:
+            length = pickle.load(fin)
+            for i in range(length):
+                pos = pickle.load(fin)
+                self.addBlock(pos)
+
+    
