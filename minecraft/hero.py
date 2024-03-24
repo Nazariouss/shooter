@@ -55,6 +55,9 @@ class Hero():
         base.accept('b', self.build)
         base.accept('v', self.destroy)
 
+        base.accept('k', self.land.saveMap)
+        base.accept('l', self.land.loadMap)
+
     def changeView(self):
         if self.cameraOn:
             self.cameraUp()
